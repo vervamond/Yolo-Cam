@@ -3,6 +3,7 @@ import cv2
 import os
 import time
 import requests
+import psutil
 
 # Configuration
 topic = "flowers"  # Replace 'flowers' with the desired topic name
