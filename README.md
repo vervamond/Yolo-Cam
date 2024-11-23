@@ -48,7 +48,7 @@ pip install ultralytics opencv-python psutil requests
 It is also recomended to use a virtual enviornment:
 ```bash
 python3 -m venv venv
-venv/bin/activate
+source venv/bin/activate
 pip install ultralytics opencv-python psutil requests
 ```
 
