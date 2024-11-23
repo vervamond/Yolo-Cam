@@ -29,6 +29,7 @@ topic = "my-unique-topic"  # Replace 'my-unique-topic' with your own desired top
 - **Frame Uploads**: Automatically uploads annotated frames containing detected persons to a configurable [ntfy.sh](https://ntfy.sh) topic.
 - **Local Archiving**: Saves all uploaded frames in a `history` directory.
 - **Graceful Shutdown**: Cleanly exits on `Ctrl+C`.
+- **Optional Preview**: Optionally shows a running window.
 
 ---
 
@@ -63,6 +64,7 @@ You can customize the script using the following variables:
 - `history_dir`: Directory where detected frames will be saved locally.
 - `test_interval`: Time (in seconds) between detection attempts when not in a timeout. Default: `0.5 seconds`.
 - `upload_timeout`: Time (in seconds) during which the script skips processing frames after an upload. Default: `10 seconds`.
+- `preview_enabled`: Boolean to show or hide the preview. Default: `False`.
 
 ---
 
