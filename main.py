@@ -9,8 +9,11 @@ topic = "security8562018347291028475383992"  # Replace 'flowers' with the desire
 model_path = "yolo11n.pt"  # Path to YOLO model
 webcam_index = 0  # Default webcam index
 history_dir = "history"  # Subdirectory for saving frames
-test_interval = 0.5  # Time (in seconds) between detection attempts
+test_interval = 3  # Time (in seconds) between detection attempts
 upload_timeout = 10  # Time (in seconds) before the next upload is allowed
+preview_enabled = False # Enable or disable preview frames
+
+print("Loading model, this may take a moment...")
 
 # Load the YOLO model
 model = YOLO(model_path)  # Ensure the model file is present in the same directory or specify its path
@@ -19,7 +22,7 @@ model = YOLO(model_path)  # Ensure the model file is present in the same directo
 webcam = cv2.VideoCapture(webcam_index)  # 0 is the default camera index
 
 if not webcam.isOpened():
-    print("Error: Could not open webcam.")
+    print("Error: Could not open webcam.\nTry changing the camera index.")
     exit()
 
 # Create the 'history' subdirectory if it doesn't exist
@@ -78,11 +81,21 @@ try:
                 # Update the last uploaded time and start the timeout
                 last_uploaded_time = current_time
 
+            if preview_enabled:
+                cv2.imshow("YOLO Person Detection", annotated_frame)
+
+            
+            # Break the loop if 'q' is pressed
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
             # Update the last test time
             last_test_time = current_time
 
 except KeyboardInterrupt:
     print("\nStopping...")
 
+
 # Release resources
 webcam.release()
+cv2.destroyAllWindows()
