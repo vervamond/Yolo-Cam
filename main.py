@@ -91,7 +91,7 @@ try:
                         response = requests.put(
                             f"https://ntfy.sh/{topic}",
                             data=file,
-                            headers={"Filename": f"frame_{timestamp}.jpg"}
+                            headers={"Title": "Person Detected", "Tags": "rotating_light", "Filename": f"frame_{timestamp}.jpg"}
                         )
                         if response.status_code == 200:
                             print(f"Frame uploaded to ntfy.sh topic '{topic}'.")
