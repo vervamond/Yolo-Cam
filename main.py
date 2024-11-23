@@ -33,6 +33,13 @@ print("Running... Press 'Ctrl+C' to stop.")
 last_uploaded_time = 0  # Time of the last successful upload
 last_test_time = 0  # Time of the last detection attempt
 
+def get_battery_status():
+    """Retrieve the battery percentage using psutil."""
+    battery = psutil.sensors_battery()
+    if battery:
+        return f"Battery: {battery.percent}%"
+    return "Battery: N/A"
+
 try:
     while True:
         current_time = time.time()
