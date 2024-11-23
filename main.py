@@ -14,6 +14,11 @@ test_interval = 3  # Time (in seconds) between detection attempts
 upload_timeout = 10  # Time (in seconds) before the next upload is allowed
 preview_enabled = False # Enable or disable preview frames
 
+font = cv2.FONT_HERSHEY_SIMPLEX  # Font for overlay text
+font_scale = 0.5  # Font size
+font_color = (0, 255, 0)  # Green color for text
+thickness = 1  # Thickness of the text
+
 print("Loading model, this may take a moment...")
 
 # Load the YOLO model
