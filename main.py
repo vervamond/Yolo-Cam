@@ -5,7 +5,7 @@ import time
 import requests
 
 # Configuration
-topic = "security8562018347291028475383992"  # Replace 'flowers' with the desired topic name
+topic = "flowers"  # Replace 'flowers' with the desired topic name
 model_path = "yolo11n.pt"  # Path to YOLO model
 webcam_index = 0  # Default webcam index
 history_dir = "history"  # Subdirectory for saving frames
