@@ -53,7 +53,7 @@ pip install ultralytics opencv-python psutil requests
 You can customize the script using the following variables:
 
 - `topic`: The [ntfy.sh](https://ntfy.sh) topic for uploading detected frames. Replace `flowers` with your desired topic.
-- `model_path`: Path to the YOLOv11 model file. Ensure the model file (`yolo11n.pt`) is available in the specified path.
+- `model_path`: Path to the YOLOv11 model file. The model will be downloaded on first run of the program.
 - `history_dir`: Directory where detected frames will be saved locally.
 - `test_interval`: Time (in seconds) between detection attempts when not in a timeout. Default: `0.5 seconds`.
 - `upload_timeout`: Time (in seconds) during which the script skips processing frames after an upload. Default: `10 seconds`.
@@ -84,12 +84,12 @@ You can customize the script using the following variables:
 ## How to Run
 
 1. Clone the repository or download the script.
-2. Ensure your YOLOv11 model (`yolo11n.pt`) is in the same directory as the script or update the `model_path` variable with its location.
-3. Run the script:
+2. Run the script:
    ```bash
    python main.py
    ```
-4. Press `Ctrl+C` to stop the script.
+   Note that this will take some time on first start, as it is downloading the model.
+3. Press `Ctrl+C` to stop the script.
 
 ---
 
@@ -117,7 +117,7 @@ You can customize the script using the following variables:
 project/
 │
 ├── main.py             # Main script
-├── yolo11n.pt          # YOLOv11 model file (download separately)
+├── yolo11n.pt          # YOLOv11 model file (download on first run)
 └── history/            # Folder to store detected frames (auto-created)
 ```
 
@@ -126,7 +126,7 @@ project/
 ## Dependencies Explained
 
 1. **ultralytics**:
-   - For loading and using the YOLOv11 object detection model.
+   - For downloading, loading, and using the YOLOv11 object detection model.
 
 2. **opencv-python**:
    - For webcam access and frame processing.
@@ -166,25 +166,21 @@ project/
    - Ensure your webcam is connected and accessible.
    - Update the `webcam_index` variable if the default index (0) doesn’t work.
 
-2. **Model File Missing**:
-   - Download the YOLOv11 model (`yolo11n.pt`) and ensure it is correctly specified in the `model_path` variable.
-
-3. **Battery Status Unavailable**:
+2. **Battery Status Unavailable**:
    - On devices without battery sensors, the script will display `Battery: N/A`.
 
-4. **Upload Issues**:
+3. **Upload Issues**:
    - Ensure your device has internet access.
    - Check the [ntfy.sh](https://ntfy.sh) service status.
+
+4. **Submit an Issue**
+   - Feel free to submit an issue [here](https://github.com/Delamcode/Yolo-Cam/issues/new/)
 
 ---
 
 ## License
 
 Currently N/A
-
----
-
-## Acknowledgments
 
 - [Ultralytics YOLO](https://github.com/ultralytics/ultralytics) for the YOLOv11 model.
 - [OpenCV](https://opencv.org/) for video and image processing.
