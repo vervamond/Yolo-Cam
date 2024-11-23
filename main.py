@@ -54,6 +54,15 @@ try:
             results = model(frame)  # Pass the frame to the YOLO model
             annotated_frame = results[0].plot()  # Draw the detections on the frame
 
+            
+            # Add timestamp and battery info to the frame
+            timestamp = time.strftime("%Y-%m-%d %H:%M:%S")  # Current date and time
+            battery_status = get_battery_status()  # Get battery percentage
+
+            # Add text overlays
+            cv2.putText(annotated_frame, timestamp, (10, 20), font, font_scale, font_color, thickness)
+            cv2.putText(annotated_frame, battery_status, (10, 40), font, font_scale, font_color, thickness)
+
             # Check if a person is detected
             person_detected = any(box.cls == 0 for box in results[0].boxes)  # Check for 'person' detections
 
