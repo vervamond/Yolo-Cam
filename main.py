@@ -13,6 +13,7 @@ history_dir = "history"  # Subdirectory for saving frames
 test_interval = 10  # Time (in seconds) between detection attempts
 upload_timeout = 3  # Time (in seconds) before the next upload is allowed
 preview_enabled = True # Enable or disable preview frames
+highpriority_confidance_requirement = 0.45
 
 font = cv2.FONT_HERSHEY_SIMPLEX  # Font for overlay text
 font_scale = 0.5  # Font size
@@ -83,7 +84,7 @@ try:
     
                 # Check if a person is detected
                 person_detected = any(box.cls == 0 for box in results[0].boxes)  # Check for 'person' detections
-                highpriority_person_detected = any((box.cls == 0 and box.conf > 0.45) for box in results[0].boxes) 
+                highpriority_person_detected = any((box.cls == 0 and box.conf > highpriority_confidance_requirement) for box in results[0].boxes) 
                 priority_detection = "max" if highpriority_person_detected else "low"
                 title_detection = "Person Detected" if highpriority_person_detected else "Person Possibly Detected"
     
