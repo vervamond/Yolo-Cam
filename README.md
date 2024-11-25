@@ -66,6 +66,7 @@ You can customize the script using the following variables:
 - `test_interval`: Time (in seconds) between detection attempts when not in a timeout. Default: `10 seconds`.
 - `upload_timeout`: Time (in seconds) during which the script skips processing frames after an upload. Default: `3 seconds`.
 - `preview_enabled`: Boolean to show or hide the preview. Default: `True`.
+- `highpriority_confidance_requirement`: Confidance requirment for a high priority notification. Default: `0.45`.
 
 ---
 
