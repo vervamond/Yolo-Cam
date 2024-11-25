@@ -10,9 +10,9 @@ topic = "flowers"  # Replace 'flowers' with the desired topic name
 model_path = "yolo11n.pt"  # Path to YOLO model
 webcam_index = 0  # Default webcam index
 history_dir = "history"  # Subdirectory for saving frames
-test_interval = 3  # Time (in seconds) between detection attempts
-upload_timeout = 10  # Time (in seconds) before the next upload is allowed
-preview_enabled = False # Enable or disable preview frames
+test_interval = 10  # Time (in seconds) between detection attempts
+upload_timeout = 3  # Time (in seconds) before the next upload is allowed
+preview_enabled = True # Enable or disable preview frames
 
 font = cv2.FONT_HERSHEY_SIMPLEX  # Font for overlay text
 font_scale = 0.5  # Font size
