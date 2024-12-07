@@ -103,6 +103,7 @@ def check_latest_message(topic, base_url):
             ):
                 # Mark the message ID as used
                 used_message_ids[message_id] = current_time
+                print("Force sending a notification...")
                 return True
         
         return False
