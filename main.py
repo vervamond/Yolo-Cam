@@ -4,6 +4,7 @@ import os
 import time
 import requests
 import psutil
+import keyboard
 import json
 
 # Configuration
