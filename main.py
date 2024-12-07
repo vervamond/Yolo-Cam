@@ -4,6 +4,7 @@ import os
 import time
 import requests
 import psutil
+import json
 
 # Configuration
 topic = "flowers"  # Replace 'flowers' with the desired topic name
@@ -21,7 +22,7 @@ font_scale = 0.5  # Font size
 font_color = (0, 255, 0)  # Green color for text
 thickness = 1  # Thickness of the text
 
-used_messages = {}
+used_message_ids = {}
 
 if topic == "flowers":
     print("Remember to change the NTFY topic in the script before running! For more information, read the README")
@@ -72,7 +73,6 @@ def send_notification(title, timestamp, priority, topic, output_path, base_url):
 
 def check_latest_message(topic, base_url):
     url = f"{base_url}/{topic}/json?poll=1"
-    global used_messages
     global used_message_ids
 
     try:
@@ -80,8 +80,13 @@ def check_latest_message(topic, base_url):
         response = requests.get(url)
         response.raise_for_status()  # Raise an exception for HTTP errors
 
-        # Parse the JSON data
-        data = response.json()
+        # Handle multiple JSON objects in the response (newline-delimited JSON)
+        data = []
+        for line in response.text.splitlines():
+            try:
+                data.append(json.loads(line))
+            except json.JSONDecodeError as e:
+                print(f"Error parsing line: {line}. Error: {e}")
 
         # Remove expired message IDs from used_message_ids
         current_time = time.time()
@@ -91,9 +96,9 @@ def check_latest_message(topic, base_url):
 
         # Find the newest non-used "SEND" message
         for entry in reversed(data):  # Iterate from the newest to the oldest
-            message_id = entry['id']
-            message_content = entry['message']
-            timestamp = entry['time']  # Assuming the JSON time is UNIX timestamp
+            message_id = entry.get('id')
+            message_content = entry.get('message')
+            timestamp = entry.get('time', 0)  # Default to 0 if 'time' is missing
 
             # Check if the message is less than a minute old, hasn't been used, and has content "SEND"
             if (
@@ -103,16 +108,15 @@ def check_latest_message(topic, base_url):
             ):
                 # Mark the message ID as used
                 used_message_ids[message_id] = current_time
-                print("Force sending a notification...")
                 return True
         
-        return False
+        return False  # No valid "SEND" message found within the last minute
     
     except requests.exceptions.RequestException as e:
-        print(f"An error occurred when getting newest messages: {e}")
+        print(f"An error occurred when fetching the data: {e}")
         return False
-    except (KeyError, IndexError) as e:
-        print(f"Error parsing newest messages: {e}")
+    except Exception as e:
+        print(f"An error occurred when processing the messages: {e}")
         return False
 
 try:
