@@ -7,6 +7,7 @@ import psutil
 
 # Configuration
 topic = "flowers"  # Replace 'flowers' with the desired topic name
+base_url = "https://ntfy.sh"
 model_path = "yolo11n.pt"  # Path to YOLO model
 webcam_index = 0  # Default webcam index
 history_dir = "history"  # Subdirectory for saving frames
@@ -53,12 +54,12 @@ def get_battery_status():
         return f"Battery: {battery.percent}%"
     return "Battery: N/A"
 
-def send_notification(title, timestamp, priority, topic, output_path):
+def send_notification(title, timestamp, priority, topic, output_path, base_url):
     # Upload the frame to ntfy.sh
     try:
         with open(output_path, 'rb') as file:
             response = requests.put(
-                f"https://ntfy.sh/{topic}",
+                f"{base_url}/{topic}",
                 data=file,
                 headers={"Title": title, "Tags": "rotating_light", "Filename": f"frame_{timestamp}.jpg", "Priority": f"{priority}"}
             )
@@ -69,8 +70,8 @@ def send_notification(title, timestamp, priority, topic, output_path):
     except Exception as e:
         print(f"Error during upload: {e}")
 
-def check_latest_message(topic):
-    url = f"https://ntfy.sh/{topic}/json?poll=1"
+def check_latest_message(topic, base_url):
+    url = f"{base_url}/{topic}/json?poll=1"
     global used_messages
     global used_message_ids
 
@@ -126,7 +127,7 @@ try:
             # Perform detection only at the specified interval
             if current_time - last_test_time >= test_interval:
 
-                force_send = check_latest_message(topic)
+                force_send = check_latest_message(topic, base_url)
 
                 # Read a frame from the webcam
                 ret, frame = webcam.read()
@@ -159,7 +160,7 @@ try:
                     output_path = os.path.join(history_dir, f"frame_{timestamp}.jpg")
                     cv2.imwrite(output_path, annotated_frame)  # Save the annotated frame
 
-                    send_notification(title_detection, timestamp, priority_detection, topic, output_path)
+                    send_notification(title_detection, timestamp, priority_detection, topic, output_path, base_url)
     
                     # Update the last uploaded time and start the timeout
                     last_uploaded_time = current_time
