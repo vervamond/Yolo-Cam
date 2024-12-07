@@ -20,6 +20,8 @@ font_scale = 0.5  # Font size
 font_color = (0, 255, 0)  # Green color for text
 thickness = 1  # Thickness of the text
 
+used_messages = {}
+
 if topic == "flowers":
     print("Remember to change the NTFY topic in the script before running! For more information, read the README")
     raise Exception("NTFY topic must be changed from default.") 
@@ -51,6 +53,66 @@ def get_battery_status():
         return f"Battery: {battery.percent}%"
     return "Battery: N/A"
 
+def send_notification(title, timestamp, priority, topic, output_path):
+    # Upload the frame to ntfy.sh
+    try:
+        with open(output_path, 'rb') as file:
+            response = requests.put(
+                f"https://ntfy.sh/{topic}",
+                data=file,
+                headers={"Title": title, "Tags": "rotating_light", "Filename": f"frame_{timestamp}.jpg", "Priority": f"{priority}"}
+            )
+            if response.status_code == 200:
+                print(f"Frame uploaded to ntfy.sh topic '{topic}'.")
+            else:
+                print(f"Failed to upload frame. Status code: {response.status_code}")
+    except Exception as e:
+        print(f"Error during upload: {e}")
+
+def check_latest_message(topic):
+    url = f"https://ntfy.sh/{topic}/json?poll=1"
+    global used_messages
+    global used_message_ids
+
+    try:
+        # Fetch the data from the URL
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+
+        # Parse the JSON data
+        data = response.json()
+
+        # Remove expired message IDs from used_message_ids
+        current_time = time.time()
+        used_message_ids = {
+            msg_id: ts for msg_id, ts in used_message_ids.items() if current_time - ts <= 60
+        }
+
+        # Find the newest non-used "SEND" message
+        for entry in reversed(data):  # Iterate from the newest to the oldest
+            message_id = entry['id']
+            message_content = entry['message']
+            timestamp = entry['time']  # Assuming the JSON time is UNIX timestamp
+
+            # Check if the message is less than a minute old, hasn't been used, and has content "SEND"
+            if (
+                current_time - timestamp <= 60
+                and message_id not in used_message_ids
+                and message_content == "SEND"
+            ):
+                # Mark the message ID as used
+                used_message_ids[message_id] = current_time
+                return True
+        
+        return False
+    
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred when getting newest messages: {e}")
+        return False
+    except (KeyError, IndexError) as e:
+        print(f"Error parsing newest messages: {e}")
+        return False
+
 try:
     while True:
         try:
@@ -63,6 +125,9 @@ try:
     
             # Perform detection only at the specified interval
             if current_time - last_test_time >= test_interval:
+
+                force_send = check_latest_message(topic)
+
                 # Read a frame from the webcam
                 ret, frame = webcam.read()
                 if not ret:
@@ -89,25 +154,12 @@ try:
                 title_detection = "Person Detected" if highpriority_person_detected else "Person Possibly Detected"
     
                 # If a person is detected, save and upload the frame
-                if person_detected:
+                if person_detected or force_send:
                     timestamp = time.strftime("%Y%m%d_%H%M%S")  # Create a timestamp for the filename
                     output_path = os.path.join(history_dir, f"frame_{timestamp}.jpg")
                     cv2.imwrite(output_path, annotated_frame)  # Save the annotated frame
-    
-                    # Upload the frame to ntfy.sh
-                    try:
-                        with open(output_path, 'rb') as file:
-                            response = requests.put(
-                                f"https://ntfy.sh/{topic}",
-                                data=file,
-                                headers={"Title": title_detection, "Tags": "rotating_light", "Filename": f"frame_{timestamp}.jpg", "Priority": f"{priority_detection}"}
-                            )
-                            if response.status_code == 200:
-                                print(f"Frame uploaded to ntfy.sh topic '{topic}'.")
-                            else:
-                                print(f"Failed to upload frame. Status code: {response.status_code}")
-                    except Exception as e:
-                        print(f"Error during upload: {e}")
+
+                    send_notification(title_detection, timestamp, priority_detection, topic, output_path)
     
                     # Update the last uploaded time and start the timeout
                     last_uploaded_time = current_time
