@@ -61,6 +61,7 @@ pip install ultralytics opencv-python psutil requests
 You can customize the script using the following variables:
 
 - `topic`: The [ntfy.sh](https://ntfy.sh) topic for uploading detected frames. Replace `flowers` with your desired topic.
+- `base_url`: The [ntfy.sh](https://ntfy.sh) base url. Can be replaced with a self-hosted instance. Default: `https://ntfy.sh`.
 - `model_path`: Path to the YOLOv11 model file. The model will be downloaded on first run of the program.
 - `history_dir`: Directory where detected frames will be saved locally.
 - `test_interval`: Time (in seconds) between detection attempts when not in a timeout. Default: `10 seconds`.
