@@ -150,10 +150,14 @@ try:
                 timestamp = time.strftime("%Y-%m-%d %H:%M:%S")  # Current date and time
                 battery_status = get_battery_status()  # Get battery percentage
     
+                power_plugged = psutil.sensors_battery().power_plugged
+                power_plugged_name = "Charging" if power_plugged else "Battery"
+
                 # Add text overlays
                 cv2.putText(annotated_frame, timestamp, (10, 20), font, font_scale, font_color, thickness)
                 cv2.putText(annotated_frame, battery_status, (10, 40), font, font_scale, font_color, thickness)
-    
+                cv2.putText(annotated_frame, power_plugged_name, (10, 60), font, font_scale, font_color, thickness)
+
                 # Check if a person is detected
                 person_detected = any(box.cls == 0 for box in results[0].boxes)  # Check for 'person' detections
                 highpriority_person_detected = any((box.cls == 0 and box.conf > highpriority_confidance_requirement) for box in results[0].boxes) 
